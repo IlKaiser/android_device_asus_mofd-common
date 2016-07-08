@@ -1,0 +1,25 @@
+[
+  {
+    "repository": "CyanogenMod/android_kernel_asus_moorefield",
+    "target_path": "kernel/asus/moorefield",
+    "branch":"cm-13.0"
+
+  },
+  {
+    "repository": "CyanogenMod/android_external_stlport",
+    "target_path": "external/stlport",
+    "branch":"cm-13.0"
+  },
+  {
+    "target_path":"external/connectivity",
+    "repository":"DirtyUnicorns/android_external_connectivity", 
+    "branch":"m-caf"
+
+  },
+
+ {
+    "repository":   "DirtyUnicorns/android_packages_apps_Snap",
+    "target_path":  "packages/apps/Snap",
+    "branch":       "m-caf"
+  }
+]
