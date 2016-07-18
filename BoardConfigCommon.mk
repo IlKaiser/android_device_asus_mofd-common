@@ -116,6 +116,7 @@ TARGET_REQUIRES_SYNCHRONOUS_SETSURFACE := true
 # Init
 TARGET_INIT_VENDOR_LIB := libinit_mofd
 TARGET_LIBINIT_DEFINES_FILE := device/asus/mofd-common/init/init_mofd.cpp
+TARGET_INIT_UMOUNT_AND_FSCK_IS_UNSAFE := true
 
 # Inline kernel building
 TARGET_KERNEL_SOURCE := kernel/asus/moorefield
@@ -162,7 +163,6 @@ BOARD_BOOTIMAGE_PARTITION_SIZE := 16777216
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 1677721600
 BOARD_CACHEIMAGE_PARTITION_SIZE := 268435456
 
-
 # PowerHAL
 TARGET_POWERHAL_VARIANT := mofd_v1
 
@@ -170,7 +170,6 @@ TARGET_POWERHAL_VARIANT := mofd_v1
 BOARD_PROVIDES_LIBRIL := true
 BOARD_RIL_SUPPORTS_MULTIPLE_CLIENTS := true
 BOARD_RIL_CLASS := ../../../device/asus/mofd-common/libril
-
 
 # Recovery
 BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
@@ -189,28 +188,6 @@ BOARD_SEPOLICY_DIRS += device/asus/mofd-common/sepolicy
 # Tap-to-Wake
 TARGET_TAP_TO_WAKE_NODE := "/sys/devices/pci0000:00/0000:00:09.2/i2c-7/7-0038/ftsdclickmode"
 
-# TWRP
-TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
-COMMON_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
-TARGET_RECOVERY_FSTAB := device/asus/mofd-common/rootdir/etc/fstab.mofd_v1
-TW_INCLUDE_CRYPTO := true
-TW_NTFS_WA := true
-RECOVERY_SDCARD_ON_DATA := true
-RECOVERY_GRAPHICS_USE_LINELENGTH := true
-TW_FLASH_FROM_STORAGE := true
-TW_INTERNAL_STORAGE_PATH := "/sdcard"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard"
-TW_EXTERNAL_STORAGE_PATH := "/external_sd"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sd"
-TW_NO_SCREEN_BLANK := true
-TW_NO_SCREEN_TIMEOUT := true
-TW_EXCLUDE_SUPERSU := true
-TWRP_EVENT_LOGGING := false
-TW_NO_USB_STORAGE := true
-DEVICE_RESOLUTION := 1080x1920
-
-
-
 # Wifi
 BOARD_WLAN_DEVICE           := bcmdhd
 BOARD_WPA_SUPPLICANT_PRIVATE_LIB := lib_driver_cmd_$(BOARD_WLAN_DEVICE)
@@ -225,5 +202,3 @@ WIFI_DRIVER_FW_PATH_STA     := "/system/etc/firmware/fw_bcmdhd.bin"
 
 # Use the non-open-source parts, if they're present
 -include vendor/asus/mofd-common/BoardConfigVendor.mk
-
-
