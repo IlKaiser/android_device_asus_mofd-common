@@ -40,6 +40,9 @@ PRODUCT_PACKAGES += \
     audio.r_submix.default \
     audio.usb.default
 
+#AudioFX
+TARGET_USE_DEVICE_AUDIO_EFFECTS_CONF := true
+
 PRODUCT_COPY_FILES += \
     device/asus/mofd-common/audio/asound.conf:system/etc/asound.conf \
     device/asus/mofd-common/audio/audio_policy.conf:system/etc/audio_policy.conf \
