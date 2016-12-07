@@ -25,6 +25,7 @@ TARGET_BOARD_PLATFORM := moorefield
 TARGET_BOOTLOADER_BOARD_NAME := moorefield
 TARGET_USERIMAGES_USE_EXT4 := true
 TARGET_USERIMAGES_USE_F2FS := true
+TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 
 TARGET_SPECIFIC_HEADER_PATH := device/asus/mofd-common/include
 
@@ -51,13 +52,17 @@ TARGET_BOOTLOADER_IS_2ND := true
 # Camera
 INTEL_USE_CAMERA_UVC := true
 INTEL_VIDEO_XPROC_SHARING := true
-COMMON_GLOBAL_CFLAGS += -DCAMERA_VENDOR_L_COMPAT
+BOARD_GLOBAL_CFLAGS += -DCAMERA_VENDOR_L_COMPAT
 TARGET_PROVIDES_CAMERA_HAL := true
+TARGET_HAS_LEGACY_CAMERA_HAL1 := true
+
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    media.stagefright.legacyencoder=true \
+    media.stagefright.less-secure=true
 
 # Charger
+WITH_CM_CHARGER := false
 BOARD_CHARGER_ENABLE_SUSPEND := true
-BOARD_CHARGER_SHOW_PERCENTAGE := true
-BOARD_HEALTHD_CUSTOM_CHARGER_RES := device/asus/mofd-common/charger/images
 
 # Dex-preoptimization: Speeds up initial boot (if we ever o a user build, which we don't)
 ifeq ($(HOST_OS),linux)
@@ -82,7 +87,7 @@ BOARD_GFX_REV := RGX6400
 ENABLE_IMG_GRAPHICS := true
 ENABLE_MRFL_GRAPHICS := true
 INTEL_HWC_MOOREFIELD := true
-COMMON_GLOBAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
+BOARD_GLOBAL_CFLAGS += -DASUS_ZENFONE2_LP_BLOBS
 HWUI_IMG_FBO_CACHE_OPTIM := true
 TARGET_INTEL_HWCOMPOSER_FORCE_ONLY_ONE_RGB_LAYER := true
 
@@ -154,7 +159,7 @@ ADDITIONAL_DEFAULT_PROPERTIES += \
     persist.intel.isv.vpp = 1 \
     persist.intel.isv.frc = 1
 
-COMMON_GLOBAL_CFLAGS += -DGFX_BUF_EXT
+BOARD_GLOBAL_CFLAGS += -DGFX_BUF_EXT
 
 # Partitions
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
@@ -169,18 +174,16 @@ TARGET_POWERHAL_VARIANT := mofd_v1
 
 # Radio
 BOARD_PROVIDES_LIBRIL := true
-BOARD_RIL_SUPPORTS_MULTIPLE_CLIENTS := true
-BOARD_RIL_CLASS := ../../../device/asus/mofd-common/libril
 
 # Recovery
-BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
 TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
-COMMON_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
+BOARD_GLOBAL_CFLAGS += -DNO_SECURE_DISCARD
 TARGET_RECOVERY_FSTAB := device/asus/mofd-common/rootdir/etc/fstab.mofd_v1
-TARGET_RECOVERY_DEVICE_MODULES := libinit_mofd librecovery_updater_mofd intel_prop thermald
+TARGET_RECOVERY_DEVICE_MODULES := libinit_mofd librecovery_updater_mofd thermald
+TARGET_RECOVERY_DENSITY := hdpi
 
 # Release tools
-TARGET_RELEASETOOLS_EXTENSIONS := device/asus/mofd-common
+TARGET_RELEASETOOLS_EXTENSIONS := device/asus/mofd-common/releasetools
 
 # Security
 BUILD_WITH_SECURITY_FRAMEWORK := chaabi_token

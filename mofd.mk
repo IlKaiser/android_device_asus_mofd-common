@@ -39,13 +39,16 @@ PRODUCT_PACKAGES += \
     audio.r_submix.default \
     audio.usb.default
 
-#AudioFX
-TARGET_USE_DEVICE_AUDIO_EFFECTS_CONF := true
-
 PRODUCT_COPY_FILES += \
     device/asus/mofd-common/audio/asound.conf:system/etc/asound.conf \
     device/asus/mofd-common/audio/audio_policy.conf:system/etc/audio_policy.conf \
     device/asus/mofd-common/audio/route_criteria.conf:system/etc/route_criteria.conf
+
+# Boot image hackery
+PRODUCT_COPY_FILES += \
+    device/asus/mofd-common/releasetools/mkbootimg:install/bin/mkbootimg \
+    device/asus/mofd-common/releasetools/unmkbootimg:install/bin/unmkbootimg \
+    device/asus/mofd-common/releasetools/sign_boot.sh:install/bin/sign_boot.sh
 
 # Bluetooth
 PRODUCT_COPY_FILES += \
@@ -78,13 +81,22 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += \
     device/asus/mofd-common/powervr.ini:system/etc/powervr.ini
 
+# Factory reset protection
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.frp.pst=/dev/block/by-name/persistent
+
 # GPS
 PRODUCT_COPY_FILES += \
     device/asus/mofd-common/configs/gps.conf:system/etc/gps.conf \
     device/asus/mofd-common/configs/gps.xml:system/etc/gps.xml
 
 PRODUCT_PROPERTY_OVERRIDES += \
-    ro.spid.gps.tty=ttyMFD2
+    ro.spid.gps.tty=ttyMFD2 \
+    ro.spid.gps.FrqPlan=FRQ_PLAN_26MHZ_2PPM \
+    ro.spid.gps.RfType=GL_RF_47531_BRCM
+
+ADDITIONAL_DEFAULT_PROPERTIES += \
+    ro.gnss.sv.status=true
 
 # Houdini (arm native bridge)
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -92,10 +104,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 ADDITIONAL_DEFAULT_PROPERTIES += ro.dalvik.vm.native.bridge=libhoudini.so
 
-# Keyhandler
-#PRODUCT_PACKAGES += \
- #   CMActions \
-  #  com.cyanogenmod.keyhandler
+
 
 # Key layout files
 PRODUCT_COPY_FILES += \
@@ -120,7 +129,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 PRODUCT_COPY_FILES += \
     device/asus/mofd-common/media/media_codecs.xml:system/etc/media_codecs.xml \
-    device/asus/mofd-common/media/media_codecs_performance.xml:system/etc/media_codecs_performance.xml \
     device/asus/mofd-common/media/media_profiles.xml:system/etc/media_profiles.xml \
     device/asus/mofd-common/media/mfx_omxil_core.conf:system/etc/mfx_omxil_core.conf \
     device/asus/mofd-common/media/video_isv_profile.xml:system/etc/video_isv_profile.xml \
@@ -164,7 +172,6 @@ PRODUCT_PACKAGES += \
     libOMXVideoDecoderVP8 \
     libOMXVideoDecoderMPEG2 \
     libOMXVideoDecoderVP9HWR \
-    libOMXVideoDecoderVP9Hybrid \
     libOMXVideoEncoderAVC \
     libOMXVideoEncoderH263 \
     libOMXVideoEncoderMPEG4 \
@@ -187,7 +194,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 
 # Ramdisk
 PRODUCT_PACKAGES += \
-    brcm_config_init.sh \
     config_init.sh \
     fstab.mofd_v1 \
     init.avc.rc \
@@ -198,7 +204,6 @@ PRODUCT_PACKAGES += \
     init.config_init.rc \
     init.debug.rc \
     init.diag.rc \
-    init.firmware.rc \
     init.gps.rc \
     init.logtool.rc \
     init.modem.rc \
@@ -211,14 +216,17 @@ PRODUCT_PACKAGES += \
     init.wifi.rc \
     init.wifi.vendor.rc \
     init.zram.rc \
-    intel_prop \
-    intel_prop.cfg \
     thermald \
     ueventd.mofd_v1.rc
 
 # Sensors
 PRODUCT_COPY_FILES += \
     device/asus/mofd-common/configs/sensor_hal_config_default.xml:system/etc/sensor_hal_config_default.xml
+
+# Shims
+PRODUCT_PACKAGES += \
+    libshim_icu \
+    libshim_gpsd
 
 # Thermal itux
 ENABLE_ITUXD := true
@@ -267,7 +275,6 @@ PRODUCT_PACKAGES += \
     libwpa_client \
     lib_driver_cmd_bcmdhd \
     hostapd \
-    dhcpcd.conf \
     wpa_supplicant \
     wpa_supplicant.conf
 

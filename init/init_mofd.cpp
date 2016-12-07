@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <fcntl.h>
 #define _REALLY_INCLUDE_SYS__SYSTEM_PROPERTIES_H_
 #include <sys/_system_properties.h>
@@ -27,17 +28,37 @@
 #include "vendor_init.h"
 
 #define PHONE_INFO "/factory/PhoneInfodisk/PhoneInfo_inf"
+#define BUF_SIZE 64
 
 /* Serial number */
 #define SERIAL_PROP "ro.serialno"
 #define SERIAL_OFFSET 0x00
 #define SERIAL_LENGTH 17
 
+/* Cpufreq */
+#define MAX_CPU_FREQ    "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq"
+#define LOW_CPU "1833000"
+#define HIGH_CPU "2333000"
+
 /* Zram */
 #define ZRAM_PROP "ro.config.zram"
 #define MEMINFO_FILE "/proc/meminfo"
 #define MEMINFO_KEY "MemTotal:"
 #define ZRAM_MEM_THRESHOLD 3000000
+
+/* Intel props */
+#define IFWI_PATH       "/sys/kernel/fw_update/fw_info/ifwi_version"
+#define CHAABI_PATH     "/sys/kernel/fw_update/fw_info/chaabi_version"
+#define MIA_PATH        "/sys/kernel/fw_update/fw_info/mia_version"
+#define SCU_BS_PATH     "/sys/kernel/fw_update/fw_info/scu_bs_version"
+#define SCU_PATH        "/sys/kernel/fw_update/fw_info/scu_version"
+#define IA32FW_PATH     "/sys/kernel/fw_update/fw_info/ia32fw_version"
+#define VALHOOKS_PATH   "/sys/kernel/fw_update/fw_info/valhooks_version"
+#define PUNIT_PATH      "/sys/kernel/fw_update/fw_info/punit_version"
+#define UCODE_PATH      "/sys/kernel/fw_update/fw_info/ucode_version"
+#define PMIC_NVM_PATH   "/sys/kernel/fw_update/fw_info/pmic_nvm_version"
+#define WATCHDOG_PATH   "/sys/devices/virtual/misc/watchdog/counter"
+#define OSRELEASE_PATH  "/proc/sys/kernel/osrelease"
 
 static int read_file2(const char *fname, char *data, int max_size)
 {
@@ -105,9 +126,83 @@ static void configure_zram() {
     fclose(f);
 }
 
+static void intel_props() {
+
+    char buf[BUF_SIZE];
+
+    if(read_file2(IFWI_PATH, buf, sizeof(buf))) {
+            property_set("sys.ifwi.version", buf);
+    }
+
+    if(read_file2(CHAABI_PATH, buf, sizeof(buf))) {
+            property_set("sys.chaabi.version", buf);
+    }
+
+    if(read_file2(MIA_PATH, buf, sizeof(buf))) {
+            property_set("sys.mia.version", buf);
+    }
+
+    if(read_file2(SCU_BS_PATH, buf, sizeof(buf))) {
+            property_set("sys.scubs.version", buf);
+    }
+
+    if(read_file2(SCU_PATH, buf, sizeof(buf))) {
+            property_set("sys.scu.version", buf);
+    }
+
+    if(read_file2(IA32FW_PATH, buf, sizeof(buf))) {
+            property_set("sys.ia32.version", buf);
+    }
+
+    if(read_file2(VALHOOKS_PATH, buf, sizeof(buf))) {
+            property_set("sys.valhooks.version", buf);
+    }
+
+    if(read_file2(PUNIT_PATH, buf, sizeof(buf))) {
+            property_set("sys.punit.version", buf);
+    }
+
+    if(read_file2(UCODE_PATH, buf, sizeof(buf))) {
+            property_set("sys.ucode.version", buf);
+    }
+
+    if(read_file2(PMIC_NVM_PATH, buf, sizeof(buf))) {
+            property_set("sys.pmic.nvm.version", buf);
+    }
+
+    if(read_file2(WATCHDOG_PATH, buf, sizeof(buf))) {
+            property_set("sys.watchdog.previous.counter", buf);
+    }
+
+    if(read_file2(OSRELEASE_PATH, buf, sizeof(buf))) {
+            property_set("sys.kernel.version", buf);
+    }
+
+}
+
+void set_feq_values()
+{
+    char buf[BUF_SIZE];
+
+    if(read_file2(MAX_CPU_FREQ, buf, sizeof(buf))) {
+	if ( strncmp(buf, LOW_CPU, strlen(LOW_CPU)) == 0 ) {
+            property_set("ro.sys.perf.device.powersave", "1250000");
+            property_set("ro.sys.perf.device.touchboost", "500000");
+            property_set("ro.sys.perf.device.full", "1833000");
+        } else if ( strncmp(buf, HIGH_CPU, strlen(HIGH_CPU)) == 0 ) {
+            property_set("ro.sys.perf.device.powersave", "1500000");
+            property_set("ro.sys.perf.device.touchboost", "1833000");
+            property_set("ro.sys.perf.device.full", "2333000");
+        } else {
+            INFO("%s: Failed to get max cpu speed: %s\n", __func__, buf);
+        }
+    }
+}
 
 void vendor_load_properties()
 {
     get_serial();
     configure_zram();
+    intel_props();
+    set_feq_values();
 }
